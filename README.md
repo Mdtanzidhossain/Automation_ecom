@@ -85,6 +85,8 @@ country eligibility and gateway availability can affect what can be purchased.
 | Failure isolation | Independent scenario sessions and outcomes; later cases continue after earlier failures |
 | Duplicate purchases | Persistent submission guards and explicit reconciliation; no blind purchase retries |
 | Gateway navigation | Recovery paths handle supported return/back-navigation cases and verify the resulting order state |
+| Storefront variants | Detect the new homepage, select the visible old-version control and verify the resulting UI |
+| Checkout UI changes | Support redesigned order cards, tracking payment controls and the quick-cart Buy Now route while preserving identity and invoice assertions |
 | Regional checks | Generated test addresses, bounded traversal of nested location levels, recorded address paths and relative delivery-charge expectations |
 | Account variants | Optional per-run credentials for account-specific behavior such as A/B assignments; overrides remain scoped to that run |
 | Cancelled orders | Identify the order even when its tracking link is removed, capture cancellation evidence and fail explicitly without placing a replacement |
@@ -162,27 +164,33 @@ not a substitute for controlled load testing or a production performance SLA.
 
 ## Validation and practical limits
 
-Development verification on **3 November 2026** included:
+The latest verification was performed on **22 November 2026**, using the local
+Docker runner against the live storefront:
 
-- **263 passed, 56 skipped** in the broader offline suite. Skipped checks are
-  not counted as passes.
-- **116 passing checks in Docker Chromium** for the latest nested-address and
-  cancellation-reporting changes, including order and independent-journey checks.
-  This is a focused verification set, not an additional live E2E run.
-- An earlier full live run completed **6/6 scenarios**. A subsequent run with
-  different seeded data completed **4/6**, exposing an additional address level
-  and an order that had become cancelled before verification.
+- **156 related checks passed in Docker Chromium.**
+- **22 focused quick-cart checks passed in Docker Chromium.** These selections
+  overlap and should not be added together as unique test coverage.
+- **All six scenario outcomes were verified across attempts:** four existing
+  orders were reconciled, one fresh Buy Now purchase completed the remaining
+  purchase flow, and the regional delivery-fee comparison passed.
 
-The latest changes address nested location traversal and report unexpected
-cancellations clearly. They were verified locally; **live E2E verification of
-those latest changes is pending deployment and a manual rerun**. The underlying
-reason for the cancellation still requires merchant audit logs. Reporting the
-status accurately does not resolve or ignore the cancellation.
+This was **not a single uninterrupted fresh 6/6 run**. Initial failures exposed
+changes to the storefront version switch, order-history layout, tracking payment
+controls and Buy Now route. The implementation was updated and the affected
+journeys were verified using their retained checkout expectations. Original
+failed reports remain part of the private evidence history.
 
-Other reliability work covers supported affiliate redirects, UI hydration before
-cart actions, canonical product URLs, bilingual names, discounts and payment
-response capture. These measures do not guarantee that every future product,
-account variant, stock condition or gateway change will pass.
+The latest work supports selecting the old storefront from the new homepage,
+choosing Email mode on the redesigned login, verifying both order-card layouts,
+and following the new quick-cart Buy Now route while retaining exact product
+identity. A bounded retry applies only to the version preference; purchase
+submissions are not blindly retried.
+
+Earlier broader offline verification recorded **263 passed and 56 skipped**.
+Skipped checks are not passes. These development results do not guarantee every
+future account variant, inventory condition, UI change or gateway will pass.
+Production deployment status has not been independently confirmed in this case
+study. CI/CD integration remains planned; GitHub hosts this portfolio showcase.
 
 See [Recent engineering updates](UPDATES.md) for implementation decisions and
 verification boundaries. Live credentials, order references and raw evidence are

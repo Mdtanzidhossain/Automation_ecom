@@ -1,6 +1,6 @@
 # Recent engineering updates
 
-Last updated: 3 November 2026.
+Last updated: 25 November 2026. Latest execution evidence: 22 November 2026.
 
 This page describes private implementation work. It contains no executable
 automation source, account credentials or customer evidence. Existing screenshots
@@ -54,13 +54,49 @@ who cancelled it. Merchant audit logs are needed to establish the cause.
 - Preserve native Rocket merchant-response verification across a page refresh.
 - Keep report downloads on the dashboard origin instead of stale localhost links.
 
+## Storefront and checkout redesign compatibility
+
+The redesigned homepage offers a button to return to the old storefront. The
+runner now selects that visible control when necessary and verifies the legacy
+search UI before proceeding. An already selected legacy storefront continues
+normally. A bounded second attempt handles a version-preference click that
+leaves the new homepage active. Current DOM evidence is saved after reloads.
+
+The redesigned login defaults to mobile-number mode. Email-based runs explicitly
+select the Email radio, verify the input mode and continue with the account's
+password flow. Both older login forms and the redesigned form remain supported.
+
+My Orders changed its header from `Order ID:` to `Order #` and now uses article
+cards with separate product thumbnail and title links. Verification supports
+both structures while retaining exact order identity, product quantities,
+prices, package composition and invoice checks. Tracking payment controls also
+support their current `aria-pressed` selection state.
+
+Buy Now now redirects to `/quick-cart/shipping?bn=...`. The runner accepts the
+reviewed legacy and current routes only when the numeric product identity is
+preserved. Receipt capture and preview write guards also recognize the new route.
+
 ## Verification status
 
-The latest focused Docker Chromium verification passed 116 checks. The broader
-offline suite previously passed 263 checks with 56 skipped. These counts describe
-different test selections and should not be added together as unique coverage.
+On 22 November, 156 related Docker Chromium checks passed, followed by 22 focused
+quick-cart checks. These selections overlap and are not additive unique coverage.
+Earlier broader offline verification recorded 263 passed and 56 skipped.
 
-An earlier live E2E run passed all six scenarios. A later seeded run passed four
-and exposed the two cases described above. The latest fixes are locally verified;
-their live E2E rerun is pending deployment. No new live orders were placed for
-the latest focused checks or for this portfolio update.
+All six live scenario outcomes were verified across attempts: four existing
+orders were reconciled without replacement checkout submissions, one fresh
+Buy Now purchase completed the remaining flow, and regional delivery comparison
+passed. This was not one uninterrupted fresh 6/6 run. The initial failures remain
+recorded in private reports rather than being rewritten as successful attempts.
+Online payment checks cover gateway or merchant initiation and unpaid state;
+financial settlement is outside this verification.
+
+The latest implementation was submitted for internal review. Deployment status
+has not been independently confirmed in this public case study. No additional
+live tests or purchases were performed for the 25 November portfolio update.
+
+## CI/CD status
+
+Execution currently uses the Dockerized dashboard/API or CLI. A personal GitHub
+Actions experiment is planned, but a completed GitHub Actions test run is not
+claimed here. This public repository contains showcase documentation and demo
+screenshots; the automation implementation remains private.

@@ -11,10 +11,13 @@
 4. **Failure analysis (60 seconds):** Open the scenario-details screenshot.
    Describe per-action timing, screenshots, videos, test-data capture and traces.
    Explain why later scenarios continue and why uncertain purchases are not retried.
-   Use the nested-address and cancelled-order examples in `UPDATES.md` to discuss
+   Use the version-switch, redesigned order-card, quick-cart and cancelled-order
+   examples in `UPDATES.md` to discuss
    the difference between an automation limitation and a merchant state change.
 5. **Architecture (45 seconds):** Walk through FastAPI, queue/metadata, Chromium,
    persistent evidence, reports and optional completion callback.
+   Explain the latest verification as six outcomes across attempts, including
+   existing-order reconciliation, rather than one fresh passing suite.
 6. **Tradeoffs (45 seconds):** Discuss dynamic product eligibility, shared-account
    serialization, deployment credentials, regional rules and maintenance after UI changes.
 
